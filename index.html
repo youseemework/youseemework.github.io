@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Utkarsh Chidar — DevOps Specialist</title>
+<meta name="description" content="Utkarsh Chidar builds and runs cloud infrastructure — Azure DevOps, Terraform, Kubernetes, Docker, Azure and GCP." />
+<meta property="og:title" content="Utkarsh Chidar — DevOps Specialist" />
+<meta property="og:description" content="Azure DevOps, Terraform, Kubernetes, Docker, Azure, GCP. Currently learning MLOps and AIOps." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F1420'/%3E%3Cpath d='M9 11h5l4 5-4 5H9l4-5z' fill='%239D7CFF'/%3E%3Crect x='19' y='20' width='6' height='2' fill='%2356C08D'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#0F1420;
+    --panel:#151B2B;
+    --panel-2:#1A2133;
+    --wire:#26304A;
+    --paper:#E7ECF6;
+    --muted:#8A97B2;
+    --signal:#9D7CFF;
+    --add:#56C08D;
+    --amber:#E5B04B;
+
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body:"IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+
+    --gap:clamp(56px, 9vw, 112px);
+    --edge:clamp(20px, 5vw, 40px);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--paper);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(157,124,255,.32)}
+  a{color:inherit}
+  img{max-width:100%;display:block}
+
+  .shell{max-width:1080px;margin:0 auto;padding:0 var(--edge)}
+
+  /* ---------- status bar ---------- */
+  .statusbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(15,20,32,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--wire);
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.02em;
+  }
+  .statusbar .shell{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;height:46px;
+  }
+  .statusbar .handle{color:var(--paper)}
+  .statusbar .handle b{color:var(--signal);font-weight:500}
+  .statusbar .state{color:var(--muted);display:flex;align-items:center;gap:8px}
+  .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--add);
+    box-shadow:0 0 0 0 rgba(86,192,141,.6);
+    animation:pulse 2.6s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(86,192,141,.5)}
+    70%{box-shadow:0 0 0 7px rgba(86,192,141,0)}
+    100%{box-shadow:0 0 0 0 rgba(86,192,141,0)}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:clamp(52px,9vw,104px) 0 var(--gap);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:-60px 0 auto;height:620px;
+    background-image:radial-gradient(var(--wire) 1px, transparent 1px);
+    background-size:26px 26px;
+    -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.5), transparent 72%);
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.5), transparent 72%);
+    opacity:.55;pointer-events:none;
+  }
+  .hero .shell{position:relative}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+    letter-spacing:.14em;text-transform:uppercase;margin:0 0 18px;
+  }
+  .eyebrow span{color:var(--signal)}
+
+  h1{
+    font-family:var(--display);
+    font-variation-settings:"wdth" 118,"wght" 800;
+    font-size:clamp(44px,8.4vw,92px);
+    line-height:.94;
+    letter-spacing:-.035em;
+    margin:0 0 20px;
+  }
+  h1 .sub{
+    display:block;
+    font-variation-settings:"wdth" 84,"wght" 500;
+    font-size:clamp(17px,2.4vw,26px);
+    letter-spacing:-.005em;
+    line-height:1.32;
+    color:var(--muted);
+    margin-top:22px;
+    max-width:26ch;
+  }
+  h1 .sub em{color:var(--paper);font-style:normal}
+
+  /* ---------- plan block ---------- */
+  .plan{
+    margin-top:clamp(34px,5vw,52px);
+    border:1px solid var(--wire);
+    border-radius:10px;
+    background:var(--panel);
+    overflow:hidden;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.9);
+  }
+  .plan-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 16px;
+    border-bottom:1px solid var(--wire);
+    background:var(--panel-2);
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+  }
+  .lamp{width:9px;height:9px;border-radius:50%;background:var(--wire)}
+  .plan-bar .path{margin-left:6px}
+  .plan-body{
+    padding:20px clamp(14px,3vw,24px) 22px;
+    overflow-x:auto;
+  }
+  .plan-body code{
+    display:block;
+    font-family:var(--mono);
+    font-size:clamp(11.5px,1.35vw,13.5px);
+    line-height:1.85;
+    white-space:pre;
+    tab-size:2;
+  }
+  .ln{display:block;position:relative;padding-left:2px}
+  .ln.add{color:var(--add)}
+  .ln.add::before{
+    content:"";position:absolute;left:-14px;right:-14px;top:0;bottom:0;
+    background:rgba(86,192,141,.055);z-index:-1;
+  }
+  .c-key{color:#B9C4DA}
+  .c-str{color:var(--amber)}
+  .c-cmt{color:#5F6C88}
+  .c-res{color:var(--signal)}
+  .c-out{color:var(--paper)}
+  .cursor{
+    display:inline-block;width:8px;height:1.05em;
+    background:var(--signal);vertical-align:-.18em;
+    animation:blink 1.1s steps(2,start) infinite;
+  }
+  @keyframes blink{to{visibility:hidden}}
+
+  .reveal-line{opacity:0;animation:lineIn .34s ease forwards}
+  @keyframes lineIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  .plan-foot{
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+    padding:14px clamp(14px,3vw,24px);
+    border-top:1px solid var(--wire);
+    background:var(--panel-2);
+  }
+  .apply{
+    font-family:var(--mono);font-size:12.5px;font-weight:500;
+    color:var(--ground);background:var(--signal);
+    border:0;border-radius:6px;padding:9px 16px;cursor:pointer;
+    transition:transform .14s ease, filter .14s ease;
+  }
+  .apply:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .apply[disabled]{background:var(--wire);color:var(--muted);cursor:default;transform:none;filter:none}
+  .plan-hint{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  /* ---------- sections ---------- */
+  section{padding:var(--gap) 0}
+  .rule{border:0;border-top:1px solid var(--wire);margin:0}
+  .label{
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+    letter-spacing:.02em;margin:0 0 10px;
+  }
+  .label b{color:var(--signal);font-weight:500}
+  h2{
+    font-family:var(--display);
+    font-variation-settings:"wdth" 104,"wght" 700;
+    font-size:clamp(28px,4.6vw,44px);
+    letter-spacing:-.025em;line-height:1.05;
+    margin:0 0 14px;
+  }
+  .lede{color:var(--muted);max-width:56ch;margin:0 0 clamp(30px,4vw,44px);font-size:16.5px}
+
+  /* ---------- stack ---------- */
+  .layers{display:grid;gap:2px;background:var(--wire);border:1px solid var(--wire);border-radius:10px;overflow:hidden}
+  .layer{
+    background:var(--ground);
+    display:grid;grid-template-columns:200px 1fr;gap:22px;
+    padding:22px clamp(16px,2.6vw,26px);
+    align-items:center;
+  }
+  .layer h3{
+    font-family:var(--mono);font-size:12.5px;font-weight:500;
+    color:var(--paper);margin:0;letter-spacing:.01em;
+  }
+  .layer h3 span{display:block;color:var(--muted);font-weight:400;margin-top:5px;font-size:11.5px}
+  .icons{display:flex;flex-wrap:wrap;gap:12px}
+  .icons img{
+    width:42px;height:42px;border-radius:9px;
+    opacity:.86;transition:opacity .18s ease, transform .18s ease;
+  }
+  .icons a:hover img, .icons a:focus-visible img{opacity:1;transform:translateY(-3px)}
+  .icons a{display:block;border-radius:9px}
+
+  /* ---------- activity ---------- */
+  .frame{
+    border:1px solid var(--wire);border-radius:10px;background:var(--panel);
+    padding:clamp(14px,2.4vw,26px);
+  }
+  .frame + .frame{margin-top:18px}
+  .frame-cap{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    margin:0 0 12px;letter-spacing:.02em;
+  }
+
+  /* ---------- playground ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:16px}
+  .card{
+    display:block;text-decoration:none;
+    border:1px solid var(--wire);border-radius:10px;background:var(--panel);
+    padding:22px 22px 20px;
+    transition:border-color .18s ease, transform .18s ease, background .18s ease;
+  }
+  a.card:hover, a.card:focus-visible{border-color:var(--signal);transform:translateY(-3px);background:var(--panel-2)}
+  .card .tag{font-family:var(--mono);font-size:11px;color:var(--signal);letter-spacing:.1em;text-transform:uppercase}
+  .card h3{
+    font-family:var(--display);font-variation-settings:"wdth" 100,"wght" 600;
+    font-size:19px;margin:12px 0 8px;letter-spacing:-.015em;
+  }
+  .card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55}
+  .card .arrow{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:12.5px;color:var(--paper)}
+
+  /* ---------- contact ---------- */
+  .contact-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,4vw,60px);align-items:start}
+  .mailto{
+    font-family:var(--display);
+    font-variation-settings:"wdth" 92,"wght" 600;
+    font-size:clamp(20px,3.2vw,32px);
+    letter-spacing:-.02em;
+    text-decoration:none;
+    border-bottom:2px solid var(--wire);
+    padding-bottom:4px;
+    display:inline-block;
+    transition:border-color .18s ease,color .18s ease;
+    word-break:break-all;
+  }
+  .mailto:hover,.mailto:focus-visible{border-color:var(--signal);color:var(--signal)}
+  .alt-mail{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:18px}
+  .alt-mail a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--wire)}
+  .alt-mail a:hover{color:var(--paper)}
+  .links{list-style:none;margin:0;padding:0;border-top:1px solid var(--wire)}
+  .links li{border-bottom:1px solid var(--wire)}
+  .links a{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:15px 2px;text-decoration:none;font-family:var(--mono);font-size:13.5px;
+    transition:padding .18s ease,color .18s ease;
+  }
+  .links a:hover,.links a:focus-visible{padding-left:12px;color:var(--signal)}
+  .links .who{color:var(--muted);font-size:12.5px}
+
+  footer{border-top:1px solid var(--wire);padding:26px 0 40px}
+  .foot-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+  /* ---------- reveal on scroll ---------- */
+  .up{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .up.in{opacity:1;transform:none}
+
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:4px}
+
+  @media (max-width:760px){
+    .layer{grid-template-columns:1fr;gap:14px}
+    .contact-grid{grid-template-columns:1fr}
+    .icons img{width:38px;height:38px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .up{opacity:1;transform:none}
+    .reveal-line{opacity:1}
+    .cursor{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <div class="shell">
+    <div class="handle">utkarsh <b>/</b> chidar</div>
+    <div class="state"><span class="dot" aria-hidden="true"></span> workspace: default</div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="shell">
+    <p class="eyebrow">DevOps Specialist <span>·</span> Accenture</p>
+    <h1>
+      Utkarsh<br>Chidar
+      <span class="sub">I keep infrastructure <em>declarative</em>, pipelines <em>boring</em>, and clusters <em>quiet</em>.</span>
+    </h1>
+
+    <div class="plan">
+      <div class="plan-bar">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="path">~/infra/engineers</span>
+      </div>
+      <div class="plan-body">
+        <code id="plan"><span class="ln"><span class="c-res">$</span> terraform plan</span>
+<span class="ln"> </span>
+<span class="ln"><span class="c-cmt">Resource actions are indicated with the following symbols:</span></span>
+<span class="ln"><span class="c-cmt">  + create</span></span>
+<span class="ln"> </span>
+<span class="ln">Terraform will perform the following actions:</span>
+<span class="ln"> </span>
+<span class="ln"><span class="c-cmt">  # engineer.utkarsh_chidar will be created</span></span>
+<span class="ln add">  + resource <span class="c-str">"devops_engineer"</span> <span class="c-str">"utkarsh_chidar"</span> {</span>
+<span class="ln add">      + <span class="c-key">role</span>      = <span class="c-str">"DevOps Specialist @ Accenture"</span></span>
+<span class="ln add">      + <span class="c-key">helps_with</span> = [<span class="c-str">"Azure DevOps"</span>, <span class="c-str">"Terraform"</span>, <span class="c-str">"Kubernetes"</span>, <span class="c-str">"Docker"</span>, <span class="c-str">"Azure"</span>, <span class="c-str">"GCP"</span>]</span>
+<span class="ln add">      + <span class="c-key">learning</span>   = [<span class="c-str">"MLOps"</span>, <span class="c-str">"AIOps"</span>]</span>
+<span class="ln add">      + <span class="c-key">exploring</span>  = [<span class="c-str">"MCP servers"</span>, <span class="c-str">"RAG projects"</span>, <span class="c-str">"n8n automation"</span>]</span>
+<span class="ln add">      + <span class="c-key">coffee</span>     = <span class="c-str">"required"</span></span>
+<span class="ln add">    }</span>
+<span class="ln"> </span>
+<span class="ln">Plan: <span class="c-out">1 to add</span>, 0 to change, 0 to destroy.<span class="cursor" aria-hidden="true"></span></span></code>
+      </div>
+      <div class="plan-foot">
+        <button class="apply" id="applyBtn">▶ Run apply</button>
+        <span class="plan-hint" id="applyHint">Creates one engineer. Safe to run.</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<hr class="rule">
+
+<section id="stack">
+  <div class="shell">
+    <p class="label up"><b>module</b>.stack</p>
+    <h2 class="up">What I build with</h2>
+    <p class="lede up">Grouped the way the platform is actually stacked — from the cloud account at the bottom to the editor I live in at the top.</p>
+
+    <div class="layers up">
+      <div class="layer">
+        <h3>Cloud<span>where it runs</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=azure" alt="Microsoft Azure" title="Azure" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=gcp" alt="Google Cloud Platform" title="GCP" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=aws" alt="Amazon Web Services" title="AWS" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Infrastructure as code<span>how it gets there</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=terraform" alt="Terraform" title="Terraform" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=ansible" alt="Ansible" title="Ansible" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Containers &amp; orchestration<span>how it ships</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=docker" alt="Docker" title="Docker" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=kubernetes" alt="Kubernetes" title="Kubernetes" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=nginx" alt="NGINX" title="NGINX" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>CI/CD &amp; source<span>how it moves</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=jenkins" alt="Jenkins" title="Jenkins" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=git" alt="Git" title="Git" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=github" alt="GitHub" title="GitHub" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=maven" alt="Maven" title="Maven" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Observability<span>how I know it works</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=grafana" alt="Grafana" title="Grafana" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=prometheus" alt="Prometheus" title="Prometheus" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Data &amp; messaging<span>what it carries</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=postgres" alt="PostgreSQL" title="PostgreSQL" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=mysql" alt="MySQL" title="MySQL" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=kafka" alt="Apache Kafka" title="Kafka" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Systems &amp; shell<span>where I debug it</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=linux" alt="Linux" title="Linux" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=redhat" alt="Red Hat" title="Red Hat" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=ubuntu" alt="Ubuntu" title="Ubuntu" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=windows" alt="Windows" title="Windows" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=bash" alt="Bash" title="Bash" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=powershell" alt="PowerShell" title="PowerShell" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Languages<span>what I write in</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=go" alt="Go" title="Go" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=java" alt="Java" title="Java" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=cpp" alt="C++" title="C++" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=nodejs" alt="Node.js" title="Node.js" loading="lazy">
+        </div>
+      </div>
+      <div class="layer">
+        <h3>Daily drivers<span>always open</span></h3>
+        <div class="icons">
+          <img src="https://skillicons.dev/icons?i=vscode" alt="Visual Studio Code" title="VS Code" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=vim" alt="Vim" title="Vim" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=postman" alt="Postman" title="Postman" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=obsidian" alt="Obsidian" title="Obsidian" loading="lazy">
+          <img src="https://skillicons.dev/icons?i=notion" alt="Notion" title="Notion" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="activity">
+  <div class="shell">
+    <p class="label up"><b>module</b>.activity</p>
+    <h2 class="up">Commits, eaten</h2>
+    <p class="lede up">My contribution graph, rebuilt nightly by a GitHub Action. The snake and the ghosts do the same job as a heatmap, only louder.</p>
+
+    <div class="frame up">
+      <p class="frame-cap">pacman-contribution-graph.svg — regenerated daily</p>
+      <img src="https://raw.githubusercontent.com/youseemework/youseemework/output/pacman-contribution-graph-dark.svg" alt="Pacman-style animation of my GitHub contribution graph" loading="lazy">
+    </div>
+    <div class="frame up">
+      <p class="frame-cap">snake.svg — same data, fewer ghosts</p>
+      <img src="https://raw.githubusercontent.com/youseemework/youseemework/output/snake.svg" alt="Snake animation eating my GitHub contribution squares" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="playground">
+  <div class="shell">
+    <p class="label up"><b>module</b>.playground</p>
+    <h2 class="up">Side quests</h2>
+    <p class="lede up">Things I built or found while waiting for a pipeline to go green.</p>
+
+    <div class="cards up">
+      <a class="card" href="https://github.com/youseemework/TicTacToeOnGITHUB/blob/Master/README.md" target="_blank" rel="noopener">
+        <span class="tag">Playable</span>
+        <h3>Tic Tac Toe, in a README</h3>
+        <p>A full game loop running on GitHub Issues and Actions. No server, no frontend.</p>
+        <span class="arrow">Play a round →</span>
+      </a>
+      <a class="card" href="https://matias.me/nsfw/" target="_blank" rel="noopener">
+        <span class="tag">Warning: fun</span>
+        <h3>Press for dancing</h3>
+        <p>The oldest prank link on the internet. Still gets people. Safe for work, honest.</p>
+        <span class="arrow">Take the risk →</span>
+      </a>
+      <a class="card" href="https://github.com/youseemework" target="_blank" rel="noopener">
+        <span class="tag">In progress</span>
+        <h3>MCP servers, RAG, n8n</h3>
+        <p>Where my evenings go right now: wiring models into the tooling I already run.</p>
+        <span class="arrow">See the repos →</span>
+      </a>
+      <div class="card">
+        <span class="tag">Fun fact</span>
+        <h3>150 calories per hour</h3>
+        <p>That's what banging your head against a wall burns. Some sprints are a full workout.</p>
+        <span class="arrow" style="color:var(--amber)">Verified by experience</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="contact">
+  <div class="shell">
+    <p class="label up"><b>module</b>.contact</p>
+    <h2 class="up">Start a thread</h2>
+    <p class="lede up">Happy to talk Azure DevOps, Terraform modules, cluster upgrades that went sideways, or anything MLOps.</p>
+
+    <div class="contact-grid up">
+      <div>
+        <a class="mailto" href="mailto:youseemework@gmail.com">youseemework@gmail.com</a>
+        <p class="alt-mail">Also reachable at <a href="mailto:chidar.utkarsh18@gmail.com">chidar.utkarsh18@gmail.com</a></p>
+      </div>
+      <ul class="links">
+        <li><a href="https://github.com/youseemework" target="_blank" rel="noopener"><span>GitHub</span><span class="who">@youseemework</span></a></li>
+        <li><a href="https://linkedin.com/in/utkarshchidar" target="_blank" rel="noopener"><span>LinkedIn</span><span class="who">/in/utkarshchidar</span></a></li>
+        <li><a href="https://instagram.com/utkarsh_chidar" target="_blank" rel="noopener"><span>Instagram</span><span class="who">@utkarsh_chidar</span></a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="shell foot-row">
+    <span>© <span id="yr">2026</span> Utkarsh Chidar</span>
+    <span>state: managed remotely · hosted on GitHub Pages</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* Page-load: stream the plan output line by line */
+  var lines = document.querySelectorAll('#plan .ln');
+  if(!reduce){
+    lines.forEach(function(el, i){
+      el.classList.add('reveal-line');
+      el.style.animationDelay = (120 + i * 55) + 'ms';
+    });
+  }
+
+  /* Scroll reveals */
+  var ups = document.querySelectorAll('.up');
+  if(reduce || !('IntersectionObserver' in window)){
+    ups.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.style.transitionDelay = (e.target.dataset.d || 0) + 'ms';
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:.12});
+    ups.forEach(function(el, i){ el.dataset.d = (i % 4) * 70; io.observe(el); });
+  }
+
+  /* terraform apply */
+  var btn = document.getElementById('applyBtn');
+  var hint = document.getElementById('applyHint');
+  var plan = document.getElementById('plan');
+  var cursor = plan.querySelector('.cursor');
+  var running = false;
+
+  var script = [
+    {t:'', d:260},
+    {t:'<span class="c-res">$</span> terraform apply -auto-approve', d:520},
+    {t:'', d:200},
+    {t:'engineer.utkarsh_chidar: Creating...', d:900},
+    {t:'engineer.utkarsh_chidar: Still creating... [10s elapsed]', d:900},
+    {t:'engineer.utkarsh_chidar: Creation complete after 4y [id=youseemework]', d:620},
+    {t:'', d:220},
+    {t:'<span class="c-out">Apply complete!</span> Resources: 1 added, 0 changed, 0 destroyed.', d:520},
+    {t:'', d:200},
+    {t:'Outputs:', d:300},
+    {t:'', d:120},
+    {t:'  <span class="c-key">email</span>    = <span class="c-str">"youseemework@gmail.com"</span>', d:260},
+    {t:'  <span class="c-key">github</span>   = <span class="c-str">"github.com/youseemework"</span>', d:260},
+    {t:'  <span class="c-key">linkedin</span> = <span class="c-str">"linkedin.com/in/utkarshchidar"</span>', d:260},
+    {t:'  <span class="c-key">status</span>   = <span class="c-str">"open to interesting problems"</span>', d:260}
+  ];
+
+  function print(html){
+    var el = document.createElement('span');
+    el.className = 'ln';
+    el.innerHTML = html || ' ';
+    if(!reduce){ el.classList.add('reveal-line'); el.style.animationDelay = '0ms'; }
+    plan.appendChild(el);
+    if(cursor) plan.appendChild(cursor);
+  }
+
+  btn.addEventListener('click', function(){
+    if(running) return;
+    running = true;
+    btn.disabled = true;
+    btn.textContent = 'Applying…';
+    hint.textContent = 'Do not interrupt a running apply.';
+
+    var i = 0;
+    (function step(){
+      if(i >= script.length){
+        btn.textContent = '✓ Applied';
+        hint.textContent = 'Apply complete. Outputs are below.';
+        return;
+      }
+      var line = script[i++];
+      print(line.t);
+      setTimeout(step, reduce ? 0 : line.d);
+    })();
+  });
+})();
+</script>
+</body>
+</html>
