@@ -91,6 +91,16 @@
     mask-image:linear-gradient(to bottom, rgba(0,0,0,.5), transparent 72%);
     opacity:.55;pointer-events:none;
   }
+  /* cursor-lit grid: the same dot field, brighter, masked to a spotlight */
+  .hero-glow{
+    position:absolute;inset:-60px 0 auto;height:620px;pointer-events:none;
+    background-image:radial-gradient(var(--signal) 1px, transparent 1px);
+    background-size:26px 26px;
+    opacity:0;transition:opacity .45s ease;
+    -webkit-mask-image:radial-gradient(190px circle at var(--mx,-999px) var(--my,-999px), #000 0%, transparent 72%);
+    mask-image:radial-gradient(190px circle at var(--mx,-999px) var(--my,-999px), #000 0%, transparent 72%);
+  }
+  .hero.lit .hero-glow{opacity:.6}
   .hero .shell{position:relative}
 
   .eyebrow{
@@ -105,19 +115,59 @@
     font-size:clamp(44px,8.4vw,92px);
     line-height:.94;
     letter-spacing:-.035em;
-    margin:0 0 20px;
+    margin:0;
   }
-  h1 .sub{
-    display:block;
+  /* every letter is a replica coming up */
+  .ltr{
+    display:inline-block;white-space:pre;
+    transition:transform .2s cubic-bezier(.2,.8,.3,1), color .2s ease;
+  }
+  .js h1 .ltr{opacity:0}
+  .js h1.rolling .ltr{
+    animation:podUp .55s cubic-bezier(.2,.75,.3,1) forwards;
+    animation-delay:calc(var(--i) * 45ms);
+  }
+  @keyframes podUp{
+    0%{opacity:0;transform:translateY(.26em) scale(.94);color:var(--wire)}
+    40%{opacity:1;color:var(--signal)}
+    100%{opacity:1;transform:none;color:var(--paper)}
+  }
+  h1 .ltr:hover{color:var(--signal);transform:translateY(-.045em)}
+
+  .rollout{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    margin:26px 0 0;
+  }
+  .rollout .obj{color:#B9C4DA}
+  .bar{display:inline-flex;gap:3px}
+  .tick{
+    width:8px;height:13px;border-radius:2px;background:var(--wire);
+    transition:background .3s ease, box-shadow .3s ease;
+  }
+  .tick.on{background:var(--add);box-shadow:0 0 8px -2px rgba(86,192,141,.8)}
+  .rollout .avail{color:var(--add)}
+  .restart{
+    background:transparent;border:1px solid var(--wire);color:var(--muted);
+    font-family:var(--mono);font-size:11px;border-radius:5px;
+    padding:5px 10px;cursor:pointer;
+    transition:border-color .16s ease,color .16s ease;
+  }
+  .restart:hover{border-color:var(--signal);color:var(--paper)}
+
+  .sub{
+    font-family:var(--display);
     font-variation-settings:"wdth" 84,"wght" 500;
     font-size:clamp(17px,2.4vw,26px);
     letter-spacing:-.005em;
     line-height:1.32;
     color:var(--muted);
-    margin-top:22px;
+    margin:30px 0 0;
     max-width:26ch;
   }
-  h1 .sub em{color:var(--paper);font-style:normal}
+  .sub em{color:var(--paper);font-style:normal}
+  .js .sub{opacity:0}
+  .js .sub.cued{animation:lineIn .55s ease forwards}
 
   /* ---------- plan block ---------- */
   .plan{
@@ -300,8 +350,11 @@
     .up{opacity:1;transform:none}
     .reveal-line{opacity:1}
     .cursor{display:none}
+    .js h1 .ltr,.js .sub{opacity:1}
+    .hero-glow{display:none}
   }
 </style>
+<script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
@@ -313,12 +366,22 @@
 </div>
 
 <header class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
   <div class="shell">
     <p class="eyebrow">DevOps Specialist <span>·</span> Accenture</p>
-    <h1>
-      Utkarsh<br>Chidar
-      <span class="sub">I keep infrastructure <em>declarative</em>, pipelines <em>boring</em>, and clusters <em>quiet</em>.</span>
-    </h1>
+
+    <h1 id="name" aria-label="Utkarsh Chidar"><span data-word="Utkarsh"></span><br><span data-word="Chidar"></span></h1>
+
+    <p class="rollout">
+      <span class="obj">deployment.apps/utkarsh-chidar</span>
+      <span class="bar" id="bar" aria-hidden="true"></span>
+      <span id="ready">0/13 ready</span>
+      <span class="avail">Available</span>
+      <span>4y</span>
+      <button class="restart" id="restart">↻ rollout restart</button>
+    </p>
+
+    <p class="sub" id="sub">I keep infrastructure <em>declarative</em>, pipelines <em>boring</em>, and clusters <em>quiet</em>.</p>
 
     <div class="plan">
       <div class="plan-bar">
@@ -534,12 +597,86 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.getElementById('yr').textContent = new Date().getFullYear();
 
-  /* Page-load: stream the plan output line by line */
+  /* ---- Hero: bring the name up one replica at a time ---- */
+  var nameEl = document.getElementById('name');
+  var barEl  = document.getElementById('bar');
+  var readyEl= document.getElementById('ready');
+  var subEl  = document.getElementById('sub');
+  var restart= document.getElementById('restart');
+  var STEP = 45, LEAD = 280, letters = [], ticks = [], timers = [];
+
+  nameEl.querySelectorAll('[data-word]').forEach(function(word){
+    word.setAttribute('aria-hidden','true');
+    word.getAttribute('data-word').split('').forEach(function(ch){
+      var s = document.createElement('span');
+      s.className = 'ltr';
+      s.textContent = ch;
+      s.style.setProperty('--i', letters.length);
+      word.appendChild(s);
+      letters.push(s);
+    });
+  });
+
+  letters.forEach(function(){
+    var t = document.createElement('span');
+    t.className = 'tick';
+    barEl.appendChild(t);
+    ticks.push(t);
+  });
+
+  function setReady(n){ readyEl.textContent = n + '/' + letters.length + ' ready'; }
+
+  function rollout(){
+    timers.forEach(clearTimeout); timers = [];
+    ticks.forEach(function(t){ t.classList.remove('on'); });
+    setReady(0);
+
+    if(reduce){
+      ticks.forEach(function(t){ t.classList.add('on'); });
+      setReady(letters.length);
+      subEl.classList.add('cued');
+      return;
+    }
+
+    nameEl.classList.remove('rolling');
+    void nameEl.offsetWidth;            // restart the CSS animation
+    nameEl.classList.add('rolling');
+
+    ticks.forEach(function(t, i){
+      timers.push(setTimeout(function(){
+        t.classList.add('on');
+        setReady(i + 1);
+      }, LEAD + i * STEP));
+    });
+
+    subEl.classList.remove('cued');
+    void subEl.offsetWidth;
+    subEl.style.animationDelay = (LEAD + letters.length * STEP) + 'ms';
+    subEl.classList.add('cued');
+  }
+
+  restart.addEventListener('click', rollout);
+  rollout();
+
+  /* Spotlight the dot grid under the cursor */
+  var hero = document.querySelector('.hero');
+  if(!reduce && window.matchMedia('(hover: hover)').matches){
+    hero.addEventListener('pointermove', function(e){
+      var r = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      hero.style.setProperty('--my', (e.clientY - r.top + 60) + 'px');
+      hero.classList.add('lit');
+    });
+    hero.addEventListener('pointerleave', function(){ hero.classList.remove('lit'); });
+  }
+
+  /* Plan output streams in once the name has settled */
   var lines = document.querySelectorAll('#plan .ln');
   if(!reduce){
+    var base = LEAD + letters.length * STEP + 180;
     lines.forEach(function(el, i){
       el.classList.add('reveal-line');
-      el.style.animationDelay = (120 + i * 55) + 'ms';
+      el.style.animationDelay = (base + i * 55) + 'ms';
     });
   }
 
